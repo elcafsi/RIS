@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import mpl_toolkits.mplot3d.axes3d as axes3d
+
+pi=np.pi
+#permeability of free space
+u0=4*pi*10**-7
+W=34
+L=17
+NumberOfPoints=100
+x=np.linspace(-W/2,W/2,NumberOfPoints)
+y=np.linspace(-L/2,L/2,NumberOfPoints)
+theta=np.linspace(-pi,pi,NumberOfPoints)
+phi=np.linspace(0,2*pi,NumberOfPoints)
+X,Y=np.meshgrid(x,y)
+THETA,PHI=np.meshgrid(theta,phi)
+# speed of ligth
+c=3*10**8
+# frequency
+f=11*10**9
+# Wavelength free space
+lambda0=c/f*1000
+distance=1
+# Distance in spherical coordinate
+r=2*pi/lambda0*(np.sin(THETA)*np.cos(PHI)+np.sin(THETA)*np.sin(PHI)+np.cos(THETA))
+# Electric field
+E=(2*pi/lambda0*u0/4*pi)*np.exp(-r)
+A=np.cos(2*pi/lambda0*X*np.cos(PHI)*np.sin(THETA))
+B=np.cos(2*pi/lambda0*Y*np.sin(PHI)*np.sin(THETA))
+R=E*(A*B)+np.sinc(2*pi/lambda0*1.5757*np.cos(THETA))
+
+
+d=10
+phaseX=np.deg2rad(180)
+phasesX=[0,phaseX,2*phaseX,3*phaseX,4*phaseX,5*phaseX,6*phaseX,7*phaseX]
+phaseY=np.deg2rad(180)
+phasesY=[0,phaseY,2*phaseY,3*phaseY,4*phaseY,5*phaseY,6*phaseY,7*phaseY]
+N=4
+for i in (1,N):
+    for j in (1, N):
+
+        R=R*np.cos(2*pi/lambda0*(i-1)*d*(np.sin(THETA)*(np.cos(PHI)))+phasesX[i-1])*(np.cos(2*pi/lambda0*(j-1)*d*(np.sin(THETA)*(np.sin(PHI)))+phasesY[j-1]))+np.cos(THETA)
+
+# Cartesian coordinates as function of Spherical coordinates
+X =R*np.sin(THETA)*np.cos(PHI)
+Y = R*np.sin(THETA)*np.sin(PHI)
+Z=R*np.cos(THETA)
+
+
+
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1, projection='3d')
+
+plot = ax.plot_surface(
+    np.rad2deg(X),np.rad2deg(Y), Z, rstride=1, cstride=1, cmap=plt.get_cmap('jet'),
+    linewidth=0.5, antialiased=False, alpha=1)
+
+plt.title('Multi Beams MIMO')
+
+ax.set_axis_off()
+fig.savefig('MultiBeamsMIMO.png', dpi=fig.dpi)
+plt.show()
+
