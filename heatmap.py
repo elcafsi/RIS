@@ -1,25 +1,25 @@
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-x, y = np.meshgrid(np.linspace(-5, 5, 100), np.linspace(-5, 5, 100))
-r1=np.sqrt((x-3)**2+(y+3)**2)
-r2=np.sqrt((x-2)**2+(y-2)**2)
-z1 = np.exp(-.5*r1)
-z2 = np.exp(-.2*r2)
-z=z1+z2
+x, y = np.meshgrid(np.linspace(-30, 30, 100), np.linspace(-30, 30, 100))
+r=np.sqrt(x**2+(y)**2)
+theta=np.arctan(y/x)
+z=r
+angle_min = np.deg2rad(-45)
+angle_max = np.deg2rad(45)
 
 
-z_min, z_max = -np.abs(z).max(), np.abs(z).max()
+# Create mask for sector
+sector_mask = (r < 20) & (y>0) & (x<0) 
+
+
 
 fig, ax = plt.subplots()
 
-c = ax.pcolormesh(x, y, z, cmap='jet')
-ax.set_title('two Omnidirectional sources ')
+c = ax.pcolormesh(x, y,0.5*r*sector_mask,cmap='jet')
+plt.title(' Radiation pattern with beamwidth of 90°')
 
 
 fig.colorbar(c, ax=ax)
-fig.savefig('Attenuation_two_sources3.png', dpi=fig.dpi)
 plt.show()
